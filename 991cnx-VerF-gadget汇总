@@ -1,0 +1,283 @@
+gadget汇总(991cnX verF)
+
+内存相关
+
+赋值寄存器
+121A8--pop-er0--赋值er0
+18814--pop-er2--赋值er2(等效0902E)
+1827C--pop-er4--赋值er4(等效19168)
+139EE--pop-er6--赋值er6(等效16338)
+0C0F0--pop-er8--赋值er8(等效16D4A,094E4,0D590,23266,253CA,29F1C,16594)
+0C29C--pop-er10--赋值er10
+21532--pop-er12--赋值er12
+20D72--pop-er14--赋值er14(等效10742)
+16134--pop-xr0--赋值xr0(等效220A6,16F0C)
+16D78--pop-xr4--赋值xr4(等效17B22,22148)
+13846--pop-xr8--赋值xr8
+1D52C--pop-xr12--赋值xr12(等效15B94)
+130E2--pop-qr0--赋值qr0
+13236--pop-qr8--赋值qr8(等效13560,22258)
+22390--pop-all--赋值qr8, qr0
+220A6--pop-r0--赋值r0(等效12640)
+15E60--pop-r4--赋值r4
+10E76--pop-ea xr4,破坏r6
+14B3C--pop-er4 er4
+22146--pop-qr8 xr4
+14BD6--pop-r9(等效14BD6)
+14B28--pop-xr4 qr8(等效14C58,144B6)
+25390--(RT)POP er8 er12
+
+ram修改
+203D2--byte-set--内存赋值[er0]=r2
+17596--[er2]=r0,er2=0
+08F90--mem-add--内存地址加法[er8]+=er2,pop xr8
+1A31E--[EA]=qr0
+13916--(RT)[er0]=er2
+1651A--[er2]=r0,r0=0
+16434--[er0]+=[er2],BCD计算破坏所有寄存器和[D05C]
+16440--[er0]-=[er2],BCD计算破坏所有寄存器和[D05C]
+1644C--[er0]*=[er2],BCD计算破坏所有寄存器和[D05C]
+16458--[er0]/=[er2],pop pc之前有CMP r0,0; BC NE,LAB_1646A分支跳转
+
+
+寄存器修改和传参
+从ram存入
+1C368--er6=[EA],qr8=EA,break[EA]
+1810E--r0=[er0]
+13ADC--(RT)r0=[er2],r2=9
+25330--(RT)er0=[er0],pop xr8
+09278--r0=[EA]
+19BF0--er8=[EA],会破坏EA
+2363C--(RT)er0=[er0+er2+1086]
+13AA4--(RT)er8=[er0+er0+er2]
+
+ADD系列
+08F5A--er0+=er2
+1C30E--qr0+=qr8
+10332--qr0-=qr8
+1C332--qr0-=qr8
+2196C--(RT)er0+=er8
+21972--(RT)er2+=er8
+08FD4--(RT)r0+=1
+09DB8--(RT)r0-=r8,pop,er8
+09DB2--(RT)r0-=r2,pop er8
+
+寄存器互传
+16C48--(RT)er4=[er8],pop er8
+16076--er8=er0
+1FD3A-er0=er8 pop er8
+1FC62--(RT)er0=er2
+22414--er6=er0,er0=er8,pop qr8
+179CC--er14=er0,pop xr0
+1E7DC--er0=er4,pop er4
+20B52--er0=er10,pop xr8
+152C4--er0=er8
+094E2--er0=er8,pop er8(等效0D58E,0D5A8,0D5C2,23264)
+14022--er0=er6,er2=er12
+14024--er2=er12
+15EE4--r2=r0,pop er0
+09BF8--(RT)r0=r1
+09DFA--(RT)er0=er12,pop er12
+23A0E--(RT)r0=r2,pop er4 er8
+09304--(RT)[EA+]=er0,[EA]=r0
+09314--(RT)[EA+]=er0,EA=r2
+09092--(RT)er14=sp
+141C8--er12=er14
+0B264--(RT)er2=er8;pop er4 er8,破坏er0
+
+混合
+09C6E--(RT)r0+=r1,[D159]=r0
+14F02--(RT)er0+=er6,er2=er12
+13AA6--(RT)er0+=er2,er8=[er0]
+0D8A6--(RT)er0+=er0,er0=[er0-7C70]
+0B25E--(RT)er2=er4,er0-=er2,pop er4 er8
+14B14--(RT)er2=er0;er0+=er4(等效13ACE)
+29EF4--(RT)er2=er8*2,破坏er0,pop er8
+208E8--er0=EA,[er0-1]=r2(会push)
+
+固定修改
+08F18--er0=0
+16CE6--r4=0
+
+19938--[D01A]->er2,er0->[d000],会破坏r1
+1A31E--qr0->[d002]
+2AD80--(RT)er2=[D00C]; er0+=er2;
+1AFBC--(RT)交换qr0 qr8,er2=[D000]; er0=[D010]; [D000]=er0; [D010]=er2
+1B08A--(RT)er2=[D050]; er0=[D010]; [D050]=er0; [D010]=er2
+1B02A--(RT)交换qr0 qr8,er0=[D020]; [D000]=er0; [D020]=er2
+1B050--(RT)交换qr0 qr8,er0=[D010]; [D030]=er0; [D010]=er2
+1B08E--(RT)er0=[D010]; [D050]=er0; [D010]=er2
+1AFD8--(RT)[D010]=er2
+1AFFE--(RT)[D030]=er2
+1B04A--(RT)[D020]=er2
+
+
+
+复制字节
+203C8--strcpy20--字符串复制 [er2] -> [er0],碰到00停止复制(等效0D0F4)
+22DC0--(RT)字符串复制 [er2] -> [er0],长度[SP]
+0EC52--字符串复制 [er2] -> [er0],长度[SP],会直接跳转到[er14]
+0875C--memcpy20--字符串复制 [er2] -> [er0],长度[SP]
+187CC--memcpy24--字符串复制 [er2] -> [er4],长度er0,pop-er4
+0CD8A--memcpy1012--字符串复制 [er10] -> [er12],长度er0,直接跳转[er4],pop-xr4,qr8
+
+
+
+屏幕相关
+0937C--screen-on--(RT)开启屏幕显示
+08772--refresh-ddd4--DDD4刷新至屏幕
+07F6C--clear-ddd4--清除DDD4屏幕缓冲区,就是[DDD4]=qr8
+08766--E3D4刷新至屏幕
+08724--DDD4->E3D4
+07EEA--r0=0:清除DDD4;r0=0x40清E3D4--别忘了刷新以清除实际屏幕
+08508--set px--(RT)设置像素
+08B2A--fill-a-field--填充矩形,左上角坐标(r0,r1),长r2,高r3
+08B3C--render bitmap--渲染位图,左上角坐标(r0,r1),内容[sp+4]
+25410--太阳能 r0=0则[F815]=0;r0不=0则[F815]=1
+
+
+
+拼字相关
+拼字结尾
+2236E--r0:高度;er2:地址;无太阳能无光标,F版发现的第一个地址,一切的根源
+2205E--r0:高度;er2:地址;有太阳能无光标,传承自C版古代拼字地址
+22270--r0:高度;er2:地址;有太阳能有光标,VerF按AC或菜单可能语法错误,误卡死
+2210A--高度:0x33(第三行);er2:地址;有太阳能有光标,第四行显示,Press AC,按任何键白屏;C版太古地址
+22054--r0:高度;er2:地址;有Press AC,稳定,C版远古地址
+
+打印字符,拼字
+0828A--print-0x1y--打印一行文本内容(可变x轴偏移),r0:x轴偏移,r1:y轴偏移,er2:文本内容指针(拼字基址)
+221B8--print-0ynf--打印一行文本内容(固定字体),r0:y轴偏移,er2:文本内容指针
+222B4--print-1ysf--打印一行文本内容(字体随设置改变),r1:y轴偏移,er2:文本内容指针(等效222DA)
+221BE--print-0f1y--打印一行文本内容(可变字体),r0:字体编码,r1:y轴偏移,er2:文本内容指针
+221BA--print-0y--r0:高度;er2:地址;锁定为正常字体
+221C2--print-1y--r1:高度;er2:地址
+222D0--通常接于拼字结尾;地址前拼小字体;高度:0x33;[SP+4]:拼字内容,字体随设置改变;超过1行的内容以正常字体显示在第二行高度处
+08B0A--拼字(调用0828A)打印一行文本(可变x轴偏移),r1:y轴偏移,er12:文本内容指针,sp=er14,pop xr12
+
+
+
+rop结构
+分支结构(详细说明可去贴吧查)
+14B12--(RT)er0=r0*r2,er2=er0,er0+=er4
+13ABC--er4=r4*r2,er4+=er0,r8=r8
+08F10--er2=[EA+],EQ,cmp er2 er0,NE,er0=0
+
+跳转系列和sp修改(循环结构)
+12D34--jump14-q8--重设SP为[er14],POP qr8(等效地址13958,1884C,19110,22472,18916,12BF0,10D46,12CB8,12D68,12DE4,12EAA,12FE6)
+2238E--jump14-q8q0--重设SP为[er14],POP qr8,qr0
+084E6--jump14-q8x4--重设SP为er14,POP qr8,POP xr4(等效地址08206)
+09D96--jump14-x4q8--重设SP为er14,POP xr4,POP qr8(等效地址138F8,13CD0,14C14,14C56,18FCA,2111A)
+08B14--jump14-x12--重设SP为er14,POP xr12
+139EA--jump14-q8e6--重设SP为er14,POP qr8,POP er6
+10740--jump14-e14--重设SP为er14,POP er14(等效地址10CC2,18C84,20CBC,20C1A,20D70
+21D36--jump[8]-e8--重设sp为[er8],pop er8
+21D38--jump6-e8--重设SP为[er6],POP er8
+19226--sp=er4+32,pop xr4 qr8
+08D56--sp+=4(等效1D0E6)
+167BE--sp+=2
+161DA--sp+=A
+15FC8--sp+=14
+1D110--sp+=2,r0=0
+161B4--sp+=2,r0=3,pop qr8,er6
+22982--er0=[0x6252+er0],B跳转到er0
+137E4--SP+=0x3c; POP qr8 xr4
+
+
+按键检测
+0F7CA--等待按键按下并将键码读取至[er0]
+2A9E0--键码读取至[er8],赋值xr4,qr8
+
+条件判断
+0B61E--(RT)er0>er2则r0=0否则r0=1
+0B636--(RT)er0<er2则r0=0否则r0=1
+193AE--er2=er4则r0=1否则r0=0,会重设所有寄存器和LR
+08DD6--(RT)若er0=er2或r0在0x4E和0x5F之间则r0=1,否则=0;常用于判断键码
+
+
+
+
+其他
+2BAD4--rt-fix--修复RT返回问题
+091D8--sleep--延时r1/0x1E 秒
+22110--debug--屏幕显示Press AC后卡死,用于测试程序是否被执行
+09190--关机(可拼字),an下显示SIOCA
+22040--自检,6789键进入不同分支;AC键退出;不按键超时退出
+091AE--无标关机
+087BC--屏幕坐标转内存坐标(r0,r1)->er2(有push)
+15F88+15FFE--dec->hex,[er12]->[er0](有push)
+2241C--16进制->显示字符,r0->er0
+
+进入模式
+24E04--主函数
+264F6--打开菜单界面,退出后继续执行
+2969A--进入计算模式
+26376--进入复数模式
+09E02--进入基数模式
+0D9EE--进入矩阵模式
+0D5CA--进入向量模式
+2C9E6--进入统计模式
+1EECE--进入表格模式
+0DCEB--进入方程模式
+23B00--进入不等式模式
+0B896--进入比例模式
+
+花式和等待shift
+221D0--wait-shift--等待shift,也可拿来开屏幕
+221C8--条纹屏等待shift,拼字时候一般没有条纹屏
+221CA--条纹屏等待shift,r0:条纹样式--无条件强制条纹屏
+221D8--棋盘花屏,等待shift,按shift后棋盘样式从屏幕消失(有push)
+23090--FP=0x3018时产生闪屏刷动效果,VerC闪不出来;FP即er14(有push)
+
+
+
+
+未整理
+
+09d92--(RT)er14=sp
+1BFDE--EA->qr0,break[EA]
+2363E--(RT)er0=[er0+1086]
+08fae--(RT)[er10]=er8,pop qr8
+09026--clear?
+122EC--pop-r1
+
+没看懂是干什么的
+09206--fill 00 at er0,long,er2
+1DA02--[er2]-10b>[er0],break EA,[sp],er6,qr8
+15FEC--(RT)r0 srl 4,break[er14]
+14314--(RT)r5=r4,r5srl 4,r2=3
+1A358--qr0 or qr8,break qr0
+15F76--r0~r3 xor FF,er0+=1,r2,r3 addc 0
+177DC--[[er0]]->calc[er2](有push)
+1D94E--num[er0]=r2(有push)
+173BC--magic--xr8=0x32803232,[er14]->[er12+1A]
+160FC--(RT)push r4,r5=0x80,r4+=0xFB,SRL r5 r4,r0 or r5,pop r4
+1610A--(RT)push r4,r5=0x80,r4+=0xFB,SRL r5 r4,r0 xor FF,r0 and r5,pop r4
+
+
+
+-----------------在此之后是未经验证或者AI说的 不建议用-----------------
+有错/可能有用的
+17558--SP+=0x2; param_2=0x2; POP xr8
+1BCDE--er0=[D000]; r0+=r2; DAA r0; r1+=C(0); DAA r1; [D000]=er0; POP xr0; [D04C,EA]=xr0; POP qr0; [D044,EA]=qr0; [D03C,EA]=qr0
+22399--(RT)er12=er14; er12-=0x10; LEA [er12]; POP er12; [EA+]=qr0; [EA+]=qr8
+1B44C--需要 r1 >= 5;内含BL,风险极高
+1EC3C--r0==0x1d && r1==0xfc 才执行RT
+23BD4--r0==0x24 && r1==0xfc 才落到POP-PC
+19386--多重BC分支+BL,极易跑飞
+1B326--BC-LT + BL调用;风险高
+11A2C--仅 er0 == er2 才执行POP-PC
+15318--er4->er0;内含BL,栈环境必须安全
+14060--er6->er0,er12->er2;内含BL调用
+14062--er2=er12;BL调用子函数,子函数栈必须安全
+15D68--er2=er12+0x14;BL调用;返回后POP-PC
+16142--存在BC条件分支;ROP不稳定
+085DE--需要r4 <= 8躲过BC LT;后续存在多组连锁BC,全部寄存器条件必须同时满足才可抵达RT;现实利用难度极高
+0995C--需要[[er8]] == 0使Z=1跳过BC-NE;绕过分支后立刻执行BL,栈被破坏,几乎不可利用
+
+160C6--pop psw,NE,r9=1
+21104-21120
+0835A
+13854
+246F4
+0F368
