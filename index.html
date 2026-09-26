@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SH4A Gadget 文件站</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif;}
+body{padding:24px;max-width:900px;margin:0 auto;background:#ffffff;}
+h1{color:#24292f;margin-bottom:20px;font-size:22px;}
+.item{display:block;padding:10px 12px;margin:4px 0;border-radius:6px;text-decoration:none;color:#0969da;border:1px solid #e5e7eb;}
+.item:hover{background:#f6f8fa;}
+.folder::before{content:"📁 ";}
+.file::before{content:"📄 ";}
+#loading{color:#666;}
+#err{color:red;display:none;}
+</style>
+</head>
+<body>
+<h1>📁 SH4A Gadget 文件下载站</h1>
+<div id="loading">正在加载文件列表...</div>
+<div id="err">加载失败，请检查仓库名称</div>
+<div id="list"></div>
+
+<script>
+// ========= 这里改成你自己信息 =========
+const USER = "guo-7690";//你的github用户名
+const REPO = "files";//你的仓库名
+const BRANCH = "main";
+const PATH = ""; // 从仓库根目录开始"
+// =======================================
+
+const listEl = document.getElementById("list");
+const loadingEl = document.getElementById("loading");
+const errEl = document.getElementById("err");
+
+async function getFileList(path){
+  const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${path}?ref=${BRANCH}`;
+  const resp = await fetch(apiUrl);
+  if(!resp.ok) throw new Error("请求失败");
+  return await resp.json();
+}
+
+async function render(){
+  try{
+    const data = await getFileList(PATH);
+    loadingEl.style.display = "none";
+    data.forEach(item=>{
+      const a = document.createElement("a");
+      a.className = item.type === "dir" ? "item folder" : "item file";
+      a.textContent = item.name;
+      if(item.type === "dir"){
+        a.href = `?path=${item.path}`;
+      }else{
+        a.href = item.download_url;
+        a.target="_blank";
+      }
+      listEl.appendChild(a);
+    })
+  }catch(e){
+    loadingEl.style.display = "none";
+    errEl.style.display = "block";
+    console.error(e);
+  }
+}
+render();
+</script>
+</body>
+</html>
